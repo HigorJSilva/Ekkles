@@ -1,12 +1,15 @@
 const Mongoose = require ('./config/DbConnection')
 import express from 'express';
 import dotenv from 'dotenv';
+import {routes} from './routes/routes'
 
 dotenv.config()
 
 const application = express()
 
 application.use(express.json());
+
+application.use(routes);
 
 application.set('port', process.env.APP_PORT || 3000)
 
