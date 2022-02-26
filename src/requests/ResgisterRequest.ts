@@ -5,10 +5,10 @@ const RegisterRequest = [
         .normalizeEmail()
         .isEmail(),
     body('nome')
-        .isString()
-        .isLength({ min: 5 }),
+        .notEmpty().withMessage('Campo Obrigatorio')
+        .isLength({ min: 5 }).withMessage('Campo precisa ser maior que 5 caracteres'),
     body('senha')
-    .   isLength({ min: 5 })
+        .isLength({ min: 5 })
 ];
 
 export { RegisterRequest };
