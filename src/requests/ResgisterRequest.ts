@@ -1,14 +1,17 @@
 import { body } from 'express-validator';
+import * as ErrorsMessages from '../helpers/ErrorsMessages'
 
 const RegisterRequest = [
     body('email')
+        .notEmpty().withMessage(ErrorsMessages.requiredMessage).bail()
         .normalizeEmail()
-        .isEmail(),
+        .isEmail().withMessage(ErrorsMessages.invalidEmailMessage),
     body('nome')
-        .notEmpty().withMessage('Campo Obrigatório')
-        .isLength({ min: 5 }).withMessage('Campo precisa ser maior que 5 caracteres'),
+        .notEmpty().withMessage(ErrorsMessages.requiredMessage).bail()
+        .isLength({ min: 5 }).withMessage(ErrorsMessages.tamanhoMessage(5)),
     body('senha')
-        .isLength({ min: 5 })
+        .notEmpty().withMessage(ErrorsMessages.requiredMessage).bail()
+        .isLength({ min: 5 }).withMessage(ErrorsMessages.tamanhoMessage(5)),
 ];
 
 export { RegisterRequest };
