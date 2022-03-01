@@ -11,7 +11,7 @@ application.use(express.json());
 
 application.use(routes);
 
-application.set('port', process.env.APP_PORT || 3000)
+application.set('port', process.env.APP_PORT || 5000)
 
 new Mongoose();
 

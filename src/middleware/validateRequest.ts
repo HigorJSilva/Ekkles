@@ -1,29 +1,21 @@
 import express, { NextFunction, Request, Response} from 'express';
-import { Result, validationResult, ValidationError } from 'express-validator';
+import { Result, validationResult } from 'express-validator';
 import { ApiResponse } from '../helpers/Response';
 import * as _ from "lodash";
+import { handleErrorMessage } from '../helpers/HandleErrorMessages';
 
 export function validateRequest (
     req: Request,
     res: Response,
     next: NextFunction,
 ){
-    const erros = validationResult(req) ;
-    if(!erros.isEmpty()){
+    const errors = validationResult(req) ;
+    if(!errors.isEmpty()){
 
-        var grouped = _.groupBy(erros.array(), function(item: {param: string}){
-            return item.param;
-          });
-          var result = _.each(grouped, function(value: any, key: any, list: any){
-              let vava: Array<any> = [];
-              value.forEach((element:{msg: string}) => {
-                vava.push(element.msg)
-              });
-             
-            return list[key] = vava;
-          });
+      let errorsArray = handleErrorMessage(errors.array())
 
-        res.status(422).json( new ApiResponse(false, 'Falha ao cadastrar Usuário', result, null))
+      res.status(422).json( new ApiResponse(false, 'Falha ao cadastrar Usuário', errorsArray, null))
+
     }
 
     next();
