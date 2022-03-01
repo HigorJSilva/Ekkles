@@ -26,15 +26,17 @@ export {
 async function authenticate(req: Request, res:Response, next:NextFunction) {
 
     AuthService.authenticate(req.body.email, req.body.senha )
-    .then( user => user 
-        ? res.status(200).json( new ApiResponse(true, null, user, null))
-        : res.status(422).json( new ApiResponse(false, 'Usuário ou senha  incorreta', null, null)))
+        .then( user => user 
+            ? () => { res.status(200); res.json( new ApiResponse(true, null, user, null))}
+            : () => { res.status(422); res.json( new ApiResponse(false, 'Erro ao cadastrar', null, null))}
+        )
     .catch(err => next(err))
 }
 function register(req: Request, res:Response, next:NextFunction) {
     AuthService.store(req.body)
         .then(user => user 
-            ? res.status(200).json( new ApiResponse(true, null, user, null))
-            : res.status(422).json( new ApiResponse(false, 'Erro ao cadastrar', null, null)))
+            ? () => { res.status(200); res.json( new ApiResponse(true, null, user, null))}
+            : () => { res.status(422); res.json( new ApiResponse(false, 'Erro ao cadastrar', null, null))}
+            )
         .catch((err: Error) => next(err));
 }
