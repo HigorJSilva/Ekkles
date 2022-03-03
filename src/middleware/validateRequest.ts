@@ -1,5 +1,5 @@
-import express, { NextFunction, Request, Response} from 'express';
-import { Result, validationResult } from 'express-validator';
+import { NextFunction, Request, Response} from 'express';
+import { validationResult } from 'express-validator';
 import { ApiResponse } from '../helpers/Response';
 import * as _ from "lodash";
 import { handleErrorMessage } from '../helpers/HandleErrorMessages';
