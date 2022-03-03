@@ -35,7 +35,18 @@ async function authenticate(email: String, senha: String) {
 }
 
 async function store(user: UserInterface) {
-    return 'ok';
+    const newUser:any = new User(user)
+    //@ts-ignore
+    user?.codigo === process.env.ADMIN_CODE ? newUser.role = 'Admin' : newUser.role = 'User';
+    
+    User.create(newUser, function (err: any) {
+        if (err) {
+            throw new Error(err);
+        }
+    });
+    const { senha, role, ...protectedUser  } = newUser._doc;
+    return protectedUser;
+   
 }
 
 async function getAll() {
