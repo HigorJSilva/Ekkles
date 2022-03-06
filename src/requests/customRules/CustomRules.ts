@@ -10,5 +10,6 @@ export function inArray(value: string, array: Array<any> , key?: string){
 export async function unique(value: string, key: string, model: Model<any>){
 
     let emailCheck = await model.findOne({[key]: value});
+    
     return emailCheck !== null ? Promise.reject() : true
 }
