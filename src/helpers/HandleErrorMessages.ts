@@ -5,12 +5,12 @@ export function handleErrorMessage (erros: Array<any>){
         return item.param;
       });
       var errorsArray = _.each(grouped, function(value: any, key: any, list: any){
-          let vava: Array<any> = [];
+          let errors: Array<any> = [];
           value.forEach((element:{msg: string}) => {
-            vava.push(element.msg)
+            errors.push(element.msg)
           });
          
-        return list[key] = vava;
+        return list[key] = errors;
       });
       return errorsArray;
 }

@@ -1,11 +1,11 @@
 import express from 'express';
 import { authenticate, register } from '../controllers/AuthController';
-import { validateRequest } from '../middleware/validateRequest';
-import { RegisterRequest } from '../requests/ResgisterRequest';
+import { validateRequest } from '../middleware/ValidateRequest';
+import { RegisterRequest, LoginRequest } from '../requests/AuthRequests';
 const router = express.Router()
 
 
-router.post('/authenticate', authenticate);     
+router.post('/login',  LoginRequest, validateRequest, authenticate);     
 router.post('/register', RegisterRequest, validateRequest,  register);     
 
   

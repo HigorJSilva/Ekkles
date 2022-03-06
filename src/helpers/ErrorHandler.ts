@@ -1,16 +1,21 @@
 import { Request, Response, NextFunction  } from "express";
+import { ApiResponse } from "./Response";
 
-module.exports = errorHandler;
+export = errorHandler;
 
 function errorHandler(err: TypeError, req: Request, res: Response, next: NextFunction) {
-    if (typeof (err) === 'string') {
 
-        return res.status(400).json({ message: err });
+    if (err.name === 'UnauthorizedError') {
+        res.status(401).json( 
+            new ApiResponse(
+                false,
+                'Usuário não autenticado',
+                null,
+                null
+            )
+        )
+        return;
     }
 
-    if (err.name === 'NaoAutorizado') {
-        return res.status(401).json({ message: 'Token inválido' });
-    }
-
-    return res.status(500).json({ message: err.message });
+    next();
 }

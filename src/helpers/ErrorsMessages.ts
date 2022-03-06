@@ -2,6 +2,7 @@ export const requiredMessage = 'Campo obrigatório'
 export const invalidEmailMessage = 'E-mail inválido'
 export const isNumericMessage = 'Campo precisa ser um número'
 export const invalidMessage = 'Valor informado inválido'
+export const uniqueMessage = 'Já existe um registro com esse valor'
 
 export const fieldSizeMessage = (min?: number | null, max?: number) => {
     if(min && max){
@@ -13,5 +14,4 @@ export const fieldSizeMessage = (min?: number | null, max?: number) => {
     if(max){
         return `Este campo pode conter até ${max} caracteres`
     }
-  
 }

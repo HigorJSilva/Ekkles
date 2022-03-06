@@ -1,53 +1,53 @@
 const secret = process.env.SECRET;
 import jwt from 'jsonwebtoken';
-// import authorize from '../middleware/Auth';
+import * as bcrypt from 'bcrypt';
 import {User, UserInterface} from '../models/User';
+import { LoginInterface, RegisterInterface } from '../requests/AuthRequests';
 
-//@ts-ignore
-const users: Array<UserInterface>  = User.find();
-
-interface ProtectedUserInterface {
-    user: {
-        nome: String,
-        email: String,
+export async function authenticate(user: LoginInterface) {
+    const storedUser: any = await User.findOne({'email': user.email});
+    if(!storedUser){
+        throw new Error("Usuário não encontrado");
     }
-    token: String,
+    let checkPassword = bcrypt.compareSync(user.senha, storedUser.senha);
 
-}
-
-export {
-    authenticate,
-    getAll,
-    getById,
-    store,
-};
-
-async function authenticate(email: String, senha: String) {
-    const user: (UserInterface | undefined) = users.find((u: UserInterface) => u.email === email && u.senha === senha);
-    if (user) {
-        const token = jwt.sign({ sub: user._id, role: user.role }, secret);
-        const { senha, role, ...protectedUser } = user;
+    if (checkPassword) {
+        const token = jwt.sign({ id: storedUser._id }, secret);
+        const { senha, role, ...protectedUser } = storedUser._doc;
         return {
-            ...protectedUser,
+            user: protectedUser,
             token
         };
+    }else{
+        throw new Error("Credenciais inválidas");
     }
 }
 
-async function store(user: UserInterface) {
-    return 'ok';
-}
+export async function store(user: RegisterInterface) {
+    const newUser:any = new User(user)
 
-async function getAll() {
-    return users.map((user: UserInterface) => {
-        const { senha, role, ...protectedUser } = user;
-        return protectedUser;
+    user?.codigo === process.env.ADMIN_CODE ? newUser.role = 'Admin' : newUser.role = 'User';
+    newUser.senha = bcrypt.hashSync(user.senha,5);
+    User.create(newUser, function (err: any) {
+        if (err) {
+            throw new Error(err);
+        }
     });
+    const { senha, role, ...protectedUser  } = newUser._doc;
+    return protectedUser;
+   
 }
 
-async function getById(id: UserInterface["_id"]) {
-    const user:  (UserInterface | undefined) = users.find((u: UserInterface) => u._id === id);
-    if (!user) return;
-    const { senha, role, ...protectedUser } = user;
-    return protectedUser;
-}
+// async function getAll() {
+//     return users.map((user: UserInterface) => {
+//         const { senha, role, ...protectedUser } = user;
+//         return protectedUser;
+//     });
+// }
+
+// async function getById(id: UserInterface["_id"]) {
+//     const user:  any = await User.find((u: UserInterface) => u._id === id);
+//     if (!user) return;
+//     const { senha, role, ...protectedUser } = user;
+//     return protectedUser;
+// }

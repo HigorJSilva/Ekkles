@@ -1,19 +1,40 @@
 import { body } from 'express-validator';
 import * as ErrorMessages from '../helpers/ErrorsMessages';
 import { estados, genero } from '../helpers/dataHelpers';
-import { inArray } from './customRules/customRules';
+import { inArray, unique } from './customRules/CustomRules';
+import { User } from '../models/User';
 
-const RegisterRequest = [
+export interface LoginInterface extends Record<string,any> {
+    email: string,
+    senha: string,
+}
+export interface RegisterInterface extends LoginInterface {
+    nome: string,
+    idade: number,
+    estado: string,
+    genero: string,
+    codigo?: string,
+}
+
+
+const LoginRequest = [
     body('email')
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
         .normalizeEmail()
         .isEmail().withMessage(ErrorMessages.invalidEmailMessage),
+
+    body('senha')
+    .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
+    .isLength({ min: 5 }).withMessage(ErrorMessages.fieldSizeMessage(5)),
+];
+
+const RegisterRequest = [
+    ...LoginRequest,
+    body('email')
+        .custom(async (value: string) => unique(value, 'email', User)).withMessage(ErrorMessages.uniqueMessage),
     body('nome')
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
-        .isLength({ min: 5 }).withMessage(ErrorMessages.fieldSizeMessage(5)),
-    body('senha')
-        .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
-        .isLength({ min: 5 }).withMessage(ErrorMessages.fieldSizeMessage(5)),
+        .isLength({ min: 5 }).withMessage(ErrorMessages.fieldSizeMessage(4)),
     body('idade')
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
         .isNumeric().withMessage(ErrorMessages.isNumericMessage),
@@ -25,4 +46,4 @@ const RegisterRequest = [
         .custom((value) => inArray(value, genero, 'valor')).withMessage(ErrorMessages.invalidMessage),
 ];
 
-export { RegisterRequest };
+export { RegisterRequest, LoginRequest };
