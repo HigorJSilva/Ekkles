@@ -14,7 +14,7 @@ export function validateRequest (
 
       let errorsArray = handleErrorMessage(errors.array())
 
-      res.status(422).json( new ApiResponse(false, 'Falha ao cadastrar usuário', null, errorsArray))
+      res.status(422).json( new ApiResponse(false, 'Falha na requisição', null, errorsArray))
       return;
     }
 

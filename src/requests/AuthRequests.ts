@@ -1,8 +1,21 @@
 import { body } from 'express-validator';
 import * as ErrorMessages from '../helpers/ErrorsMessages';
 import { estados, genero } from '../helpers/dataHelpers';
-import { inArray, unique } from './customRules/customRules';
+import { inArray, unique } from './customRules/CustomRules';
 import { User } from '../models/User';
+
+export interface LoginInterface extends Record<string,any> {
+    email: string,
+    senha: string,
+}
+export interface RegisterInterface extends LoginInterface {
+    nome: string,
+    idade: number,
+    estado: string,
+    genero: string,
+    codigo?: string,
+}
+
 
 const LoginRequest = [
     body('email')
@@ -33,4 +46,4 @@ const RegisterRequest = [
         .custom((value) => inArray(value, genero, 'valor')).withMessage(ErrorMessages.invalidMessage),
 ];
 
-export { RegisterRequest };
+export { RegisterRequest, LoginRequest };
