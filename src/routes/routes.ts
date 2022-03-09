@@ -7,7 +7,7 @@ import { votingGroupRoutes } from './votingGroup';
 
 const routes = express.Router();
 routes.use('/', authRoutes);
-routes.use('/user', authorize(), userRoutes);
-routes.use('/voting-group', authorize(Roles.Admin), votingGroupRoutes);
+routes.use('/user', userRoutes);
+routes.use('/voting-group', votingGroupRoutes);
 
 export  {routes};

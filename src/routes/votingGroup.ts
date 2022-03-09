@@ -4,13 +4,11 @@ import {authorize} from '../middleware/Auth';
 import { validateRequest } from '../middleware/ValidateRequest';
 import { AuthenticatedUserRequest } from '../requests/AuthenticatedUserRequest';
 import { StoreVotingGroupRequest } from '../requests/VotingGroupRequest';
+import { Roles } from '../helpers/Roles';
 
 const router = express.Router()
 
-router.get('/', AuthenticatedUserRequest, validateRequest, index);
-router.post('/', StoreVotingGroupRequest, validateRequest, store);
-// router.get('/:id', authorize(), validateRequest, UpdateRequest, search);
-// router.put('/:id', authorize(), validateRequest, UpdateRequest, search);
-// router.delete('/:id', authorize(), remove);
+router.get('/', authorize(Roles.Admin), AuthenticatedUserRequest, validateRequest, index);
+router.post('/', authorize(Roles.Admin), StoreVotingGroupRequest, validateRequest,  store);
 
 export  {router as votingGroupRoutes};
