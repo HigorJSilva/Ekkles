@@ -1,14 +1,14 @@
 import { body } from 'express-validator';
+import { Types} from 'mongoose';
 import * as ErrorMessages from '../helpers/ErrorsMessages';
-import { estados } from '../helpers/dataHelpers';
-import { inArray } from './customRules/CustomRules';
+import { exists } from './customRules/CustomRules';
 import { AuthenticatedUserInterface, AuthenticatedUserRequest } from './AuthenticatedUserRequest';
+import { User } from '../models/User';
 
 export interface StoreVotingGroupInterface extends AuthenticatedUserInterface {
     nome: string,
-    idade: number,
-    estado: string,
-    genero: string,
+    adminId: Types.ObjectId,
+    usersId: Array<Types.ObjectId>,
 }
 
 export const StoreVotingGroupRequest = [
@@ -18,5 +18,6 @@ export const StoreVotingGroupRequest = [
         .isLength({ min: 5 }).withMessage(ErrorMessages.fieldSizeMessage(4)),
     body('usersId')
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
-        .custom((value) => inArray(value, estados, 'sigla')).withMessage(ErrorMessages.invalidMessage),
+        .custom(async (value: Array<string>) => exists(value, User))
+            .withMessage(ErrorMessages.existsMessage),
 ];

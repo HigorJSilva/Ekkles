@@ -7,8 +7,8 @@ interface MongoResult<T> extends mongoose.Document{
 export interface VotingGroupInterface extends MongoResult<VotingGroupInterface>{
   _id: Types.ObjectId;
   nome: string;
-  adminId: Types.ObjectId;
-  usersId: Array<Types.ObjectId>;
+  adminId: Schema.Types.ObjectId;
+  usersId: Array<Schema.Types.ObjectId>;
 }
 
 const VotingGroupSchema = new Schema<VotingGroupInterface>({

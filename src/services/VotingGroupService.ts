@@ -15,11 +15,11 @@ export async function index(id: Types.ObjectId) {
 
 export async function store(votingGroup: StoreVotingGroupInterface) {
 
-    const newVotingGroup: VotingGroupInterface = new VotingGroup(votingGroup);
+    let newVotingGroup: VotingGroupInterface = new VotingGroup(votingGroup);
 
+    newVotingGroup.adminId = votingGroup.user.id;
     VotingGroup.create(newVotingGroup, function (err: any) {
         if (err) {
-            console.log('err.message :>> ', err.message);
             throw new Error("Erro ao cadastrar grupo");
         }
     });
