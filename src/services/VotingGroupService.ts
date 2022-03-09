@@ -1,6 +1,6 @@
 import {Types} from 'mongoose';
 import { VotingGroup, VotingGroupInterface } from '../models/VotingGroup';
-import { StoreVotingGroupInterface } from '../requests/VotingGroupRequest';
+import { StoreVotingGroupInterface, UpdateVotingGroupInterface } from '../requests/VotingGroupRequest';
 
 export async function index(id: Types.ObjectId) {
 
@@ -38,27 +38,26 @@ export async function search(search: string) {
     return votingGroups;
 }
 
+export async function update(votingGroup: UpdateVotingGroupInterface) {
 
-// export async function update(user: UpdateInterface, id: string) {
+    let storedVotingGroup = await VotingGroup.findById(votingGroup.id);
 
-    
-//    let updatedUser: any = await User.findOneAndUpdate({ _id: id}, user, {new: true} );
+    if(!storedVotingGroup || storedVotingGroup?.adminId != votingGroup.user.id ){
+        throw new Error("Não autorizado");
+    }
 
-//     if (!updatedUser) {
-//         throw new Error("Usuário não encontrado");
-//     }
+    let updatedVotingGroup = await storedVotingGroup.updateOne(votingGroup);
 
-//     const { senha, role, ...protectedUser  } = updatedUser._doc;
-//     return protectedUser;
-// }
+    return updatedVotingGroup;
+}
 
-// export async function remove(user: UpdateInterface, id: string) {
+export async function remove(id: Types.ObjectId) {
 
-//     let removedUser: any = await User.findByIdAndDelete({ _id: id} );
+   let votingGroup = await VotingGroup.findByIdAndDelete(id)
+
+    if (!votingGroup) {
+        throw new Error("Grupo não encontrado");
+    }
  
-//     if (!removedUser) {
-//         throw new Error("Usuário não encontrado");
-//     }
- 
-//     return true;
-// }
+    return votingGroup;
+}

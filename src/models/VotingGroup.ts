@@ -13,7 +13,7 @@ export interface VotingGroupInterface extends MongoResult<VotingGroupInterface>{
 
 const VotingGroupSchema = new Schema<VotingGroupInterface>({
   nome: { type: String, required: true, min: 4, },
-  adminId: [{ type: Schema.Types.ObjectId, ref : 'User', required: true}], 
+  adminId: { type: Schema.Types.ObjectId, ref : 'User', required: true}, 
   usersId: [{ type: Schema.Types.ObjectId, ref : 'User'}],
 
 });
