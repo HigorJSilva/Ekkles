@@ -24,7 +24,7 @@ export async function authenticate(user: LoginInterface) {
 }
 
 export async function store(user: RegisterInterface) {
-    const newUser:any = new User(user)
+    const newUser: UserInterface = new User(user)
 
     user?.codigo === process.env.ADMIN_CODE ? newUser.role = 'Admin' : newUser.role = 'User';
     newUser.senha = bcrypt.hashSync(user.senha,5);

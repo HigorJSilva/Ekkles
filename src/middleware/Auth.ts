@@ -1,6 +1,7 @@
 import expressJwt from 'express-jwt';
 import { Request, Response, NextFunction  } from "express";
-import { User } from '../models/User';
+import { User, UserInterface } from '../models/User';
+import errorHandler from '../helpers/ErrorHandler';
 
 
 
@@ -8,6 +9,7 @@ export function authorize(roles: Array<string> | string = []) {
 
     if (typeof roles === 'string') {  
         roles = [roles];
+        
     }
 
     return [
@@ -17,16 +19,16 @@ export function authorize(roles: Array<string> | string = []) {
         }),
 
         async (req: Request, res: Response, next: NextFunction) => {
-            //@ts-ignore
-            const user = await User.findById(req.user.id);
+
+            const user: UserInterface | null = await User.findById(req.user?.id);
             if(!user){
-                throw new Error("Usuário não autenticado");
+                return errorHandler({name: 'UnauthorizedError', message: ''}, req, res , next);
             }
-             //@ts-ignore
+            //@ts-ignore
             req.params.user ={id: user.id}
-            
+
             if (roles.length && !roles.includes(user.role)) {
-                return res.status(401).json({ message: 'Usuário não autorizado' });
+                return errorHandler({name: 'UnauthorizedError', message: ''}, req, res , next);
             }
            
             next();

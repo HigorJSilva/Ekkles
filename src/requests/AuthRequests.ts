@@ -44,6 +44,8 @@ const RegisterRequest = [
     body('genero')
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
         .custom((value) => inArray(value, genero, 'valor')).withMessage(ErrorMessages.invalidMessage),
+    body('codigo')
+        .optional({ nullable: true })
 ];
 
 export { RegisterRequest, LoginRequest };

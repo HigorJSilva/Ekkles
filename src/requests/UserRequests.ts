@@ -1,7 +1,8 @@
 import { body, param } from 'express-validator';
 import * as ErrorMessages from '../helpers/ErrorsMessages';
 import { estados, genero } from '../helpers/dataHelpers';
-import { inArray } from './customRules/CustomRules';;
+import { inArray } from './customRules/CustomRules';
+import { AuthenticatedUserRequest } from './AuthenticatedUserRequest';
 
 export interface UpdateInterface extends Record<string,any> {
     nome: string,
@@ -11,7 +12,7 @@ export interface UpdateInterface extends Record<string,any> {
 }
 
 const UpdateRequest = [
-
+    ...AuthenticatedUserRequest,
     body('nome')
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
         .isLength({ min: 5 }).withMessage(ErrorMessages.fieldSizeMessage(4)),
@@ -27,4 +28,4 @@ const UpdateRequest = [
     param('user.id').notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
 ];
 
-export {  UpdateRequest };
+export { UpdateRequest };

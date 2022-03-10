@@ -1,6 +1,10 @@
 import mongoose, { Schema, Types} from 'mongoose';
 
-export interface UserInterface extends mongoose.Document{
+
+interface MongoResult<T> extends mongoose.Document{
+  _doc: T
+}
+export interface UserInterface extends MongoResult<UserInterface>{
   _id: Types.ObjectId;
   nome: string;
   email: string;
