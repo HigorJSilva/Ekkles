@@ -4,6 +4,7 @@ export const isNumericMessage = 'Campo precisa ser um número'
 export const invalidMessage = 'Valor informado inválido'
 export const uniqueMessage = 'Já existe um registro com esse valor'
 export const existsMessage = 'Valor não encontrado'
+export const arrayMessage = 'Campo não é um array'
 
 export const fieldSizeMessage = (min?: number | null, max?: number) => {
     if(min && max){

@@ -17,9 +17,9 @@ export async function unique(value: string, key: string, model: Model<any>){
     return emailCheck !== null ? Promise.reject() : true
 }
 
-export async function exists(usersId: Array<string>, model: Model<any>){
-    let response = await model.find().where('_id').in(usersId).exec();
-    if(!response || response.length < usersId.length){
+export async function exists(value: Array<string>, model: Model<any>){
+    let response = await model.find().where('_id').in(value).exec();
+    if(!response || response.length < value.length){
         return Promise.reject(uniqueMessage)
     }
     return true
