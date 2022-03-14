@@ -1,5 +1,4 @@
-import { NOMEM } from "dns";
-import mongoose, {Schema, Types} from "mongoose";
+import mongoose, {Schema, Types, Model} from "mongoose";
 
 interface MongoResult<T> extends mongoose.Document{
   _doc: T
@@ -15,6 +14,10 @@ export interface SurveyInterface extends MongoResult<SurveyInterface> {
   opcoes: [SurveyOptionsInterface],
 }
 
+interface VotingGroupModelInterface extends Model<SurveyInterface> {
+  buildQueryParams(search: string): any;
+}
+
 const SurveyOptionsSchema =  new Schema<SurveyOptionsInterface> ({
   titulo: {type: String, required: true, min: 4 },
 });
@@ -26,4 +29,8 @@ const SurveySchema =  new Schema<SurveyInterface> ({
 
 });
 
-export const Survey = mongoose.model<SurveyInterface>('Survey', SurveySchema);
+SurveySchema.statics.buildQueryParams = function (search) {
+  return {nome: search}
+}
+
+export const Survey = mongoose.model<SurveyInterface, VotingGroupModelInterface>('Survey', SurveySchema);

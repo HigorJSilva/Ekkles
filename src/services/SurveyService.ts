@@ -27,7 +27,7 @@ export async function store(survey: StoreSurveyInterface) {
 
 export async function search(adminId: Types.ObjectId ,search: string) {
 
-    const query = Types.ObjectId.isValid(search) ? {_id: search, nome: search } : {nome: search}
+    const query = Types.ObjectId.isValid(search) ? {_id: search} : Survey.buildQueryParams(search);
 
     let surveys: Array<SurveyInterface> | null = await Survey.find({adminId:adminId})
     .or([{$regex: '.*' + query + '.*' }]);
