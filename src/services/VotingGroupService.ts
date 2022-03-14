@@ -26,10 +26,11 @@ export async function store(votingGroup: StoreVotingGroupInterface) {
     return newVotingGroup._doc;
 }
 
-export async function search(search: string) {
-
-    let votingGroups: Array<VotingGroupInterface> | null = await VotingGroup.find()
-    .or([{_id: search}, { nome: search }]);
+export async function search(adminId: Types.ObjectId, search: string) {
+    
+    const query = Types.ObjectId.isValid(search) ? {_id: search} : VotingGroup.buildQueryParams(search)
+    let votingGroups: Array<VotingGroupInterface> | null = await VotingGroup.find({adminId:adminId})
+    .or([{$regex: '.*' + query + '.*' }]);
 
     if (!votingGroups) {
         throw new Error("Grupo não encontrado");
