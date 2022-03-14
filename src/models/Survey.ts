@@ -7,7 +7,6 @@ interface MongoResult<T> extends mongoose.Document{
 
 export interface SurveyOptionsInterface {
   titulo: string,
-  opcao: string
 }
 
 export interface SurveyInterface extends MongoResult<SurveyInterface> {
@@ -18,8 +17,6 @@ export interface SurveyInterface extends MongoResult<SurveyInterface> {
 
 const SurveyOptionsSchema =  new Schema<SurveyOptionsInterface> ({
   titulo: {type: String, required: true, min: 4 },
-  opcao:  {type: String, required: true, min: 2 },
-  
 });
 
 const SurveySchema =  new Schema<SurveyInterface> ({
@@ -28,6 +25,5 @@ const SurveySchema =  new Schema<SurveyInterface> ({
   opcoes:[{type:SurveyOptionsSchema, required: true}],
 
 });
-
 
 export const Survey = mongoose.model<SurveyInterface>('Survey', SurveySchema);
