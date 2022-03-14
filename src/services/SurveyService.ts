@@ -25,10 +25,12 @@ export async function store(survey: StoreSurveyInterface) {
     return newSurvey._doc;
 }
 
-export async function search(search: string) {
+export async function search(adminId: Types.ObjectId ,search: string) {
 
-    let surveys: Array<SurveyInterface> | null = await Survey.find()
-    .or([{_id: search}, { nome: search }]);
+    const query = Types.ObjectId.isValid(search) ? {_id: search, nome: search } : {nome: search}
+
+    let surveys: Array<SurveyInterface> | null = await Survey.find({adminId:adminId})
+    .or([{$regex: '.*' + query + '.*' }]);
 
     if (!surveys) {
         throw new Error("Pesquisa não encontrada");

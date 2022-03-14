@@ -17,6 +17,17 @@ export async function index(req: Request, res:Response, next:NextFunction) {
         .catch((err: Error) => next(res.status(422).json( new ApiResponse(false, err.toString().replace('Error: ',''), null, null))));
 }
 
+export async function search(req: Request, res:Response, next:NextFunction) {
+    const filteredRequest:AuthenticatedUserInterface = <AuthenticatedUserInterface> getFilteredRequest(req);
+
+    SurveyService.search(filteredRequest.user.id, req.params.search)
+        .then( user => user 
+            ?  res.status(200).json( new ApiResponse(true, null, user, null))
+            :  res.status(422).json( new ApiResponse(false, 'Erro ao listar grupos', null, null))
+        )
+        .catch((err: Error) => next(res.status(422).json( new ApiResponse(false, err.toString().replace('Error: ',''), null, null))));
+}
+
 export async function store(req: Request, res:Response, next:NextFunction) {
     const filteredRequest: StoreSurveyInterface = <StoreSurveyInterface> getFilteredRequest(req);
 

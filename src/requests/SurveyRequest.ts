@@ -22,14 +22,14 @@ export interface RemoveSurveyInterface extends AuthenticatedUserInterface {
     id:Types.ObjectId,
 }
 
-export const StoreSurveyReques = [
+export const StoreSurveyRequest = [
     ...AuthenticatedUserRequest,
     body('nome')
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
         .isLength({ min: 5 }).withMessage(ErrorMessages.fieldSizeMessage(5)),
     body('votingGroup')
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
-        .custom(async (value: Array<string>) => exists(value, VotingGroup))
+        .custom(async (value: string) => exists([value], VotingGroup))
             .withMessage(ErrorMessages.existsMessage),
     body('opcoes')
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
@@ -41,6 +41,6 @@ export const RemoveSurveyRequest = [
 ];
 
 export const UpdateSurveyRequest = [
-    ...StoreSurveyReques,
+    ...StoreSurveyRequest,
     ...RemoveSurveyRequest,
 ];
