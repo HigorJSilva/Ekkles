@@ -1,6 +1,8 @@
 import {Types} from 'mongoose';
 import { Survey, SurveyInterface } from '../models/Survey';
+import { Votes } from '../models/Votes';
 import { StoreSurveyInterface, UpdateSurveyInterface } from '../requests/SurveyRequest';
+import { VotesInterface } from '../requests/VoteRequest';
 
 export async function index(id: Types.ObjectId) {
 
@@ -62,3 +64,29 @@ export async function remove(id: Types.ObjectId) {
  
     return survey;
 }
+
+export async function vote(vote: VotesInterface) {
+
+    let survey = await Survey.findById(vote.id, function (err: any, mama: any) {
+        mama.optionIds.id(vote.id);
+    });
+
+    if (!survey) {
+        throw new Error("Pesquisa não encontrada");
+    }
+
+    // await Survey.findById({name: 'Bob'}, function (err, user) {
+    //     user.photos.id(photo._id);
+    // });
+
+    let newVote = await Votes.create({
+        optionId: vote.optionId,
+        userId: vote.user.id,
+    })
+ 
+     if (!newVote) {
+         throw new Error("Não foi possivel computar seu voto");
+     }
+  
+     return newVote;
+ }
