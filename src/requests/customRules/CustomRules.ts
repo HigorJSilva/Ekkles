@@ -1,6 +1,5 @@
-import {Model, Types} from "mongoose";
-import errorHandler from "../../helpers/ErrorHandler";
-import { existsMessage, uniqueMessage } from "../../helpers/ErrorsMessages";
+import {Model} from "mongoose";
+import { uniqueMessage } from "../../helpers/ErrorsMessages";
 
 export function inArray(value: string, array: Array<any> , key?: string){
     if(key){
@@ -26,8 +25,8 @@ export async function exists(value: Array<string>, model: Model<any>){
 }
 
 export function isFutureDate(date: string){
-    let enteredDate=new Date(date);
-    let todaysDate= new Date();
+    let enteredDate = new Date(date);
+    let todaysDate = new Date();
    
     return enteredDate > todaysDate ? true :  false;
 }
