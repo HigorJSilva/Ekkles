@@ -24,3 +24,10 @@ export async function exists(value: Array<string>, model: Model<any>){
     }
     return true
 }
+
+export function isFutureDate(date: string){
+    let enteredDate=new Date(date);
+    let todaysDate= new Date();
+   
+    return enteredDate > todaysDate ? true :  false;
+}

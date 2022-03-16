@@ -1,9 +1,8 @@
 import { body, param } from 'express-validator';
 import { Types} from 'mongoose';
 import * as ErrorMessages from '../helpers/ErrorsMessages';
-import { exists } from './customRules/CustomRules';
+import { exists, isFutureDate } from './customRules/CustomRules';
 import { AuthenticatedUserInterface, AuthenticatedUserRequest } from './AuthenticatedUserRequest';
-import { User } from '../models/User';
 import { SurveyOptionsInterface } from '../models/Survey';
 import { VotingGroup } from '../models/VotingGroup';
 
@@ -34,6 +33,12 @@ export const StoreSurveyRequest = [
     body('opcoes')
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
         .isArray().withMessage(ErrorMessages.arrayMessage),
+    body('dataFim')
+        .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
+        .isISO8601()
+        .toDate()
+        .custom(value => isFutureDate(value)).withMessage(ErrorMessages.notFutureDateMessage)
+        
 ];
 
 export const RemoveSurveyRequest = [

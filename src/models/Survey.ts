@@ -12,6 +12,7 @@ export interface SurveyInterface extends MongoResult<SurveyInterface> {
   nome: string,
   votingGroup: Types.ObjectId,
   opcoes: Types.DocumentArray<SurveyOptionsInterface & mongoose.Document>
+  dataFim: Date
 }
 
 interface VotingGroupModelInterface extends Model<SurveyInterface> {
@@ -26,7 +27,7 @@ const SurveySchema =  new Schema<SurveyInterface> ({
   nome: { type: String, required: true, min: 4 },
   votingGroup: { type: Schema.Types.ObjectId, ref : 'VotingGroup', required: true},
   opcoes:[{type:SurveyOptionsSchema, required: true}],
-
+  dataFim: { type: Date, required: true},
 });
 
 SurveySchema.statics.buildQueryParams = function (search) {

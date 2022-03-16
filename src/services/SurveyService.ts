@@ -94,9 +94,9 @@ export async function vote(vote: VotesInterface) {
         .where('optionId').in(_.map(Array(opcoes), '_id'))
         .exec();
     
-        if(result.length){
-            throw new Error("Usuário já participou da pesquisa");
-        } 
+    if(result.length){
+        throw new Error("Usuário já participou da pesquisa");
+    } 
         
     let newVote = await Votes.create({
         optionId: vote.optionId,

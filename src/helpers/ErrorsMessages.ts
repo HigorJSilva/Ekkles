@@ -5,7 +5,7 @@ export const invalidMessage = 'Valor informado inválido'
 export const uniqueMessage = 'Já existe um registro com esse valor'
 export const existsMessage = 'Valor não encontrado'
 export const arrayMessage = 'Campo não é um array'
-
+export const notFutureDateMessage = 'Data informada não é posterior a atual'
 export const fieldSizeMessage = (min?: number | null, max?: number) => {
     if(min && max){
         return `Este campo precisa conter entre ${min} e ${max} caracteres`
