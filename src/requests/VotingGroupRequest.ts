@@ -32,6 +32,7 @@ export const StoreVotingGroupRequest = [
 
 export const RemoveVotingGroupRequest = [
     param('id').notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
+    .isMongoId().bail().withMessage(ErrorMessages.invalidMongoId)
 ];
 
 export const UpdateVotingGroupRequest = [

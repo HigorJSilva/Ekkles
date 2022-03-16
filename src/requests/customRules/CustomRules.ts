@@ -1,5 +1,7 @@
 import {Model} from "mongoose";
 import { uniqueMessage } from "../../helpers/ErrorsMessages";
+import { Survey } from "../../models/Survey";
+import { Types } from "mongoose";
 
 export function inArray(value: string, array: Array<any> , key?: string){
     if(key){
@@ -30,3 +32,13 @@ export function isFutureDate(date: string){
    
     return enteredDate > todaysDate ? true :  false;
 }
+
+export async function checkSurveyEndDate(surveyId: Types.ObjectId){
+    let survey = await Survey.findById(surveyId);
+
+    let surveyEndDate = new Date(survey!.dataFim);
+    let todaysDate = new Date();
+    
+    return surveyEndDate > todaysDate ? true : Promise.reject();
+}
+    
