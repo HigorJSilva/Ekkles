@@ -4,14 +4,14 @@ interface MongoResult<T> extends mongoose.Document{
   _doc: T
 }
 
-export interface SurveyOptionsInterface {
+export interface SurveyOptionsInterface extends Types.Subdocument {
   titulo: string,
 }
 
 export interface SurveyInterface extends MongoResult<SurveyInterface> {
   nome: string,
   votingGroup: Types.ObjectId,
-  opcoes: [SurveyOptionsInterface],
+  opcoes: Types.DocumentArray<SurveyOptionsInterface & mongoose.Document>
 }
 
 interface VotingGroupModelInterface extends Model<SurveyInterface> {

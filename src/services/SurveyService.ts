@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { Votes } from '../models/Votes';
 import { StoreSurveyInterface, UpdateSurveyInterface } from '../requests/SurveyRequest';
 import { VotesInterface } from '../requests/VoteRequest';
+import { VotingGroupInterface } from '../models/VotingGroup';
 
 export async function index(id: Types.ObjectId) {
 
@@ -68,32 +69,35 @@ export async function remove(id: Types.ObjectId) {
 
 export async function vote(vote: VotesInterface) {
 
-    let survey = await Survey.findById(vote.id);
+    let survey = await Survey.findById(vote.id).populate({
+        path: 'votingGroup',
+    });
 
     if (!survey) {
         throw new Error("Pesquisa não encontrada");
     }
 
-    //@ts-ignore //TODO: remover ts-ignore
+    const users = (<VotingGroupInterface> <unknown>survey.votingGroup).usersId;
+    
+    if(!users.includes(vote.user.id)){
+        throw new Error("Usuário não autorizado a responder a pesquisa");
+    }
+
     let opcoes = survey.opcoes.id(vote.optionId);
 
     if(!opcoes){
         throw new Error("Opção não encontrada");
     }
 
-    await Votes
+    let result = await Votes
         .where({userId: vote.user.id})
-        .where('optionId').in(_.map(opcoes, '_id'))
-        .exec()
-        .then((records) => {
-
-            if(records.length){
-                throw new Error("Usuário já participou da votação");
-            } 
-            return true
-            
-        });
-
+        .where('optionId').in(_.map(Array(opcoes), '_id'))
+        .exec();
+    
+        if(result.length){
+            throw new Error("Usuário já participou da pesquisa");
+        } 
+        
     let newVote = await Votes.create({
         optionId: vote.optionId,
         userId: vote.user.id,
