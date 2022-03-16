@@ -1,5 +1,6 @@
 import {Types} from 'mongoose';
 import { Survey, SurveyInterface } from '../models/Survey';
+import * as _ from 'lodash';
 import { Votes } from '../models/Votes';
 import { StoreSurveyInterface, UpdateSurveyInterface } from '../requests/SurveyRequest';
 import { VotesInterface } from '../requests/VoteRequest';
@@ -67,26 +68,40 @@ export async function remove(id: Types.ObjectId) {
 
 export async function vote(vote: VotesInterface) {
 
-    let survey = await Survey.findById(vote.id, function (err: any, mama: any) {
-        mama.optionIds.id(vote.id);
-    });
+    let survey = await Survey.findById(vote.id);
 
     if (!survey) {
         throw new Error("Pesquisa não encontrada");
     }
 
-    // await Survey.findById({name: 'Bob'}, function (err, user) {
-    //     user.photos.id(photo._id);
-    // });
+    //@ts-ignore //TODO: remover ts-ignore
+    let opcoes = survey.opcoes.id(vote.optionId);
+
+    if(!opcoes){
+        throw new Error("Opção não encontrada");
+    }
+
+    await Votes
+        .where({userId: vote.user.id})
+        .where('optionId').in(_.map(opcoes, '_id'))
+        .exec()
+        .then((records) => {
+
+            if(records.length){
+                throw new Error("Usuário já participou da votação");
+            } 
+            return true
+            
+        });
 
     let newVote = await Votes.create({
         optionId: vote.optionId,
         userId: vote.user.id,
     })
  
-     if (!newVote) {
-         throw new Error("Não foi possivel computar seu voto");
-     }
+    if (!newVote) {
+        throw new Error("Não foi possivel computar seu voto");
+    }
   
-     return newVote;
+    return newVote;
  }
