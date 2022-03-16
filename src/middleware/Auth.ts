@@ -22,7 +22,7 @@ export function authorize(roles: Array<string> | string = []) {
 
             const user: UserInterface | null = await User.findById(req.user?.id);
             if(!user){
-                return errorHandler({name: 'UnauthorizedError', message: ''}, req, res , next);
+                return errorHandler({name: 'UnauthenticatedError', message: ''}, req, res , next);
             }
             //@ts-ignore
             req.params.user ={id: user.id}
