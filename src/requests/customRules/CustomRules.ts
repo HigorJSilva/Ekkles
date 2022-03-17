@@ -2,6 +2,7 @@ import {Model} from "mongoose";
 import { uniqueMessage } from "../../helpers/ErrorsMessages";
 import { Survey } from "../../models/Survey";
 import { Types } from "mongoose";
+import { Request } from "express";
 
 export function inArray(value: string, array: Array<any> , key?: string){
     if(key){
@@ -18,8 +19,8 @@ export async function unique(value: string, key: string, model: Model<any>){
     return emailCheck !== null ? Promise.reject() : true
 }
 
-export async function exists(value: Array<string>, model: Model<any>){
-    let response = await model.find().where('_id').in(value).exec();
+export async function exists(value: Array<string>, model: Model<any>, userId: string){
+    let response = await model.find().where({adminId: userId}).where('_id').in(value).exec();
     if(!response || response.length < value.length){
         return Promise.reject(uniqueMessage)
     }
@@ -38,7 +39,7 @@ export async function checkSurveyEndDate(surveyId: Types.ObjectId){
 
     let surveyEndDate = new Date(survey!.dataFim);
     let todaysDate = new Date();
-    
+
     return surveyEndDate > todaysDate ? true : Promise.reject();
 }
     

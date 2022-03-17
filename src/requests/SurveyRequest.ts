@@ -28,7 +28,7 @@ export const StoreSurveyRequest = [
         .isLength({ min: 5 }).withMessage(ErrorMessages.fieldSizeMessage(5)),
     body('votingGroup')
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
-        .custom(async (value: string) => exists([value], VotingGroup))
+        .custom(async (value: string, { req }) => exists([value], VotingGroup, req.user.id))
             .withMessage(ErrorMessages.existsMessage),
     body('opcoes')
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
