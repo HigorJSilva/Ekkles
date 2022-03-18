@@ -1,3 +1,4 @@
+import { NextFunction } from "express";
 import mongoose, {Schema, Types, Model} from "mongoose";
 
 interface MongoResult<T> extends mongoose.Document{
@@ -33,5 +34,13 @@ const SurveySchema =  new Schema<SurveyInterface> ({
 SurveySchema.statics.buildQueryParams = function (search) {
   return {nome: search}
 }
+
+const populateFields = function(this: Model<SurveyInterface>, next: NextFunction) {
+  this.populate('votingGroup', '_id nome usersIds');
+  next();
+};
+
+//@ts-ignore
+SurveySchema.pre('findOne', populateFields).pre('find', populateFields);
 
 export const Survey = mongoose.model<SurveyInterface, VotingGroupModelInterface>('Survey', SurveySchema);
