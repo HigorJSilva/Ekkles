@@ -1,4 +1,5 @@
 import {Types} from 'mongoose';
+import { Survey } from '../models/Survey';
 import { VotingGroup, VotingGroupInterface } from '../models/VotingGroup';
 import { StoreVotingGroupInterface, UpdateVotingGroupInterface } from '../requests/VotingGroupRequest';
 
@@ -54,7 +55,13 @@ export async function update(votingGroup: UpdateVotingGroupInterface) {
 
 export async function remove(id: Types.ObjectId) {
 
-   let votingGroup = await VotingGroup.findByIdAndDelete(id)
+    let votingGroup = await VotingGroup.findById(id)
+
+    let surveys = await Survey.find({votingGroup:id})
+
+    if(surveys.length > 0){
+        throw new Error("Exitem pesquisas ligadas a esse grupo");
+    }
 
     if (!votingGroup) {
         throw new Error("Grupo não encontrado");
