@@ -3,7 +3,7 @@ import { Survey, SurveyInterface } from '../models/Survey';
 import * as _ from 'lodash';
 import { Votes } from '../models/Votes';
 import { StoreSurveyInterface, UpdateSurveyInterface } from '../requests/SurveyRequest';
-import { VotesInterface } from '../requests/VoteRequest';
+import { StoreVotesInterface, GetVoteInterface } from '../requests/VoteRequest';
 import { VotingGroupInterface } from '../models/VotingGroup';
 
 export async function index(id: Types.ObjectId) {
@@ -67,7 +67,7 @@ export async function remove(id: Types.ObjectId) {
     return survey;
 }
 
-export async function vote(vote: VotesInterface) {
+export async function vote(vote: StoreVotesInterface) {
 
     let survey = await Survey.findById(vote.id).populate({
         path: 'votingGroup',
@@ -108,4 +108,25 @@ export async function vote(vote: VotesInterface) {
     }
   
     return newVote;
- }
+}
+
+export async function getVoteResult(vote: GetVoteInterface) {
+
+    let survey = await Survey.findById(vote.id);
+
+    if (!survey) {
+        throw new Error("Pesquisa não encontrada");
+    }
+
+    let result = await Votes.aggregate([
+        {$match:{ "optionId": { "$in": _.map(survey.opcoes, '_id')}}},
+        {$unwind: '$optionId'},
+        {$group: {_id: '$optionId', count:{$sum:1}}}
+    ])
+
+    result.forEach(element => {
+        element.nome = _.find(survey!.opcoes, {_id: element._id})?.titulo
+    });
+    
+    return result;
+}

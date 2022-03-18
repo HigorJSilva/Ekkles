@@ -4,7 +4,7 @@ import { ApiResponse } from '../helpers/Response';
 import { getFilteredRequest } from '../helpers/Utils';
 import { AuthenticatedUserInterface } from '../requests/AuthenticatedUserRequest';
 import { RemoveSurveyInterface, StoreSurveyInterface, UpdateSurveyInterface } from '../requests/SurveyRequest';
-import { VotesInterface } from '../requests/VoteRequest';
+import { StoreVotesInterface, GetVoteInterface } from '../requests/VoteRequest';
 
 
 export async function index(req: Request, res:Response, next:NextFunction) {
@@ -13,7 +13,7 @@ export async function index(req: Request, res:Response, next:NextFunction) {
     SurveyService.index(filteredRequest.user.id)
         .then( user => user 
             ?  res.status(200).json( new ApiResponse(true, null, user, null))
-            :  res.status(422).json( new ApiResponse(false, 'Erro ao listar grupos', null, null))
+            :  res.status(422).json( new ApiResponse(false, 'Erro ao listar pesquisas', null, null))
         )
         .catch((err: Error) => next(res.status(422).json( new ApiResponse(false, err.toString().replace('Error: ',''), null, null))));
 }
@@ -24,7 +24,7 @@ export async function search(req: Request, res:Response, next:NextFunction) {
     SurveyService.search(filteredRequest.user.id, req.params.search)
         .then( user => user 
             ?  res.status(200).json( new ApiResponse(true, null, user, null))
-            :  res.status(422).json( new ApiResponse(false, 'Erro ao listar grupos', null, null))
+            :  res.status(422).json( new ApiResponse(false, 'Erro ao listar pesquisas', null, null))
         )
         .catch((err: Error) => next(res.status(422).json( new ApiResponse(false, err.toString().replace('Error: ',''), null, null))));
 }
@@ -33,9 +33,9 @@ export async function store(req: Request, res:Response, next:NextFunction) {
     const filteredRequest: StoreSurveyInterface = <StoreSurveyInterface> getFilteredRequest(req);
 
     SurveyService.store(filteredRequest)
-        .then( user => user 
-            ?  res.status(200).json( new ApiResponse(true, null, user, null))
-            :  res.status(422).json( new ApiResponse(false, 'Erro ao cadastrar grupos', null, null))
+        .then( survey => survey 
+            ?  res.status(200).json( new ApiResponse(true, null, survey, null))
+            :  res.status(422).json( new ApiResponse(false, 'Erro ao cadastrar pesquisa', null, null))
         )
         .catch((err: Error) => next(res.status(422).json( new ApiResponse(false, err.toString().replace('Error: ',''), null, null))));
 }
@@ -44,9 +44,9 @@ export async function update(req: Request, res:Response, next:NextFunction) {
     const filteredRequest: UpdateSurveyInterface = <UpdateSurveyInterface> getFilteredRequest(req);
 
     SurveyService.update(filteredRequest)
-        .then( user => user 
-            ?  res.status(200).json( new ApiResponse(true, null, null, null))
-            :  res.status(422).json( new ApiResponse(false, 'Erro ao alterar grupos', null, null))
+        .then( survey => survey 
+            ?  res.status(200).json( new ApiResponse(true, null, survey, null))
+            :  res.status(422).json( new ApiResponse(false, 'Erro ao alterar pesquisa', null, null))
         )
         .catch((err: Error) => next(res.status(422).json( new ApiResponse(false, err.toString().replace('Error: ',''), null, null))));
 }
@@ -56,20 +56,31 @@ export async function remove(req: Request, res:Response, next:NextFunction) {
     const filteredRequest: RemoveSurveyInterface = <RemoveSurveyInterface> getFilteredRequest(req);
 
     SurveyService.remove(filteredRequest.id)
-        .then( user => user 
+        .then( survey => survey
             ?  res.status(200).json( new ApiResponse(true, null, null, null))
-            :  res.status(422).json( new ApiResponse(false, 'Erro ao remover grupos', null, null))
+            :  res.status(422).json( new ApiResponse(false, 'Erro ao remover pesquisa', null, null))
         )
         .catch((err: Error) => next(res.status(422).json( new ApiResponse(false, err.toString().replace('Error: ',''), null, null))));
 }
 
 export async function vote(req: Request, res:Response, next:NextFunction) {
-    const filteredRequest:VotesInterface = <VotesInterface> getFilteredRequest(req);
+    const filteredRequest:StoreVotesInterface = <StoreVotesInterface> getFilteredRequest(req);
 
     SurveyService.vote(filteredRequest)
-        .then( user => user 
-            ?  res.status(200).json( new ApiResponse(true, null, user, null))
-            :  res.status(422).json( new ApiResponse(false, 'Erro ao listar grupos', null, null))
+        .then( pollRequest => pollRequest 
+            ?  res.status(200).json( new ApiResponse(true, null, pollRequest, null))
+            :  res.status(422).json( new ApiResponse(false, 'Erro ao listar resultados', null, null))
+        )
+        .catch((err: Error) => next(res.status(422).json( new ApiResponse(false, err.toString().replace('Error: ',''), null, null))));
+}
+
+export async function getVoteResult(req: Request, res:Response, next:NextFunction) {
+    const filteredRequest:GetVoteInterface = <GetVoteInterface> getFilteredRequest(req);
+
+    SurveyService.getVoteResult(filteredRequest)
+        .then( pollResult => pollResult
+            ?  res.status(200).json( new ApiResponse(true, null, pollResult, null))
+            :  res.status(422).json( new ApiResponse(false, 'Erro ao listar resultados', null, null))
         )
         .catch((err: Error) => next(res.status(422).json( new ApiResponse(false, err.toString().replace('Error: ',''), null, null))));
 }

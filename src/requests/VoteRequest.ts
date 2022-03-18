@@ -2,14 +2,26 @@ import { body, param } from "express-validator";
 import * as ErrorMessages from '../helpers/ErrorsMessages';
 import {Types} from "mongoose"; 
 import { AuthenticatedUserRequest } from "./AuthenticatedUserRequest";
-import { checkSurveyEndDate } from "./customRules/CustomRules";
+import { votingAuthRule, checkSurveyEndDate } from "./customRules/CustomRules";
 
-export interface VotesInterface extends Record<string, any> {
+export interface StoreVotesInterface extends Record<string, any> {
     optionId: Types.ObjectId,
     userId: Types.ObjectId,
 }
+export interface GetVoteInterface extends Record<string, any> {
+    id: Types.ObjectId,
+}
 
-const VoteRequest = [
+export const GetVoteRequest = [
+    ...AuthenticatedUserRequest,
+    param('id')
+        .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
+        .isMongoId().bail().withMessage(ErrorMessages.invalidMongoId),
+    param('user.id')
+        .custom(async (value, {req}) => votingAuthRule(value, req.params!.id)).withMessage(ErrorMessages.existsMessage)
+];
+
+export const StoreVoteRequest = [
     ...AuthenticatedUserRequest,
     param('id')
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
@@ -18,5 +30,3 @@ const VoteRequest = [
     body('optionId')
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail(),
 ];
-
-export { VoteRequest };
