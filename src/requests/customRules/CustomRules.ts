@@ -1,8 +1,12 @@
 import {Model} from "mongoose";
 import { uniqueMessage } from "../../helpers/ErrorsMessages";
-import { Survey } from "../../models/Survey";
+import { Survey, SurveyInterface } from "../../models/Survey";
 import { Types } from "mongoose";
-import { Request } from "express";
+import { User } from "../../models/User";
+import { Roles } from "../../helpers/Roles";
+import { VotingGroupInterface } from "../../models/VotingGroup";
+
+type SurveyPopulatedInterface = {votingGroup: SurveyInterface & VotingGroupInterface }
 
 export function inArray(value: string, array: Array<any> , key?: string){
     if(key){
@@ -43,3 +47,24 @@ export async function checkSurveyEndDate(surveyId: Types.ObjectId){
     return surveyEndDate > todaysDate ? true : Promise.reject();
 }
     
+export async function votingAuthRule(userId: Types.ObjectId, surveyId: Types.ObjectId){
+    let user = await User.findById(userId);
+
+    if(!user){
+        Promise.reject();
+    }
+
+    let adminId: Types.ObjectId = user!.role === Roles.Admin 
+        ? user!._id
+        : user!.adminId;
+
+    let survey: SurveyPopulatedInterface | null =  await Survey.findById(surveyId).populate({
+       path: 'votingGroup'
+    });
+
+    if(!survey || survey?.votingGroup.adminId.toString() !== adminId.toString()){
+        return Promise.reject();
+    }
+
+    return true;
+}
