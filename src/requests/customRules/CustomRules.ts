@@ -1,6 +1,12 @@
-import {Model, Types} from "mongoose";
-import errorHandler from "../../helpers/ErrorHandler";
-import { existsMessage, uniqueMessage } from "../../helpers/ErrorsMessages";
+import {Model} from "mongoose";
+import { uniqueMessage } from "../../helpers/ErrorsMessages";
+import { Survey, SurveyInterface } from "../../models/Survey";
+import { Types } from "mongoose";
+import { User } from "../../models/User";
+import { Roles } from "../../helpers/Roles";
+import { VotingGroupInterface } from "../../models/VotingGroup";
+
+type SurveyPopulatedInterface = {votingGroup: SurveyInterface & VotingGroupInterface }
 
 export function inArray(value: string, array: Array<any> , key?: string){
     if(key){
@@ -17,10 +23,48 @@ export async function unique(value: string, key: string, model: Model<any>){
     return emailCheck !== null ? Promise.reject() : true
 }
 
-export async function exists(usersId: Array<string>, model: Model<any>){
-    let response = await model.find().where('_id').in(usersId).exec();
-    if(!response || response.length < usersId.length){
+export async function exists(value: Array<string>, model: Model<any>, userId: string){
+    let response = await model.find().where({adminId: userId}).where('_id').in(value).exec();
+    if(!response || response.length < value.length){
         return Promise.reject(uniqueMessage)
     }
     return true
+}
+
+export function isFutureDate(date: string){
+    let enteredDate = new Date(date);
+    let todaysDate = new Date();
+   
+    return enteredDate > todaysDate ? true :  false;
+}
+
+export async function checkSurveyEndDate(surveyId: Types.ObjectId){
+    let survey = await Survey.findById(surveyId);
+
+    let surveyEndDate = new Date(survey!.dataFim);
+    let todaysDate = new Date();
+
+    return surveyEndDate > todaysDate ? true : Promise.reject();
+}
+    
+export async function votingAuthRule(userId: Types.ObjectId, surveyId: Types.ObjectId){
+    let user = await User.findById(userId);
+
+    if(!user){
+        Promise.reject();
+    }
+
+    let adminId: Types.ObjectId = user!.role === Roles.Admin 
+        ? user!._id
+        : user!.adminId;
+
+    let survey: SurveyPopulatedInterface | null =  await Survey.findById(surveyId).populate({
+       path: 'votingGroup'
+    });
+
+    if(!survey || survey?.votingGroup.adminId.toString() !== adminId.toString()){
+        return Promise.reject();
+    }
+
+    return true;
 }

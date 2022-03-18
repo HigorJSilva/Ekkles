@@ -1,4 +1,4 @@
-import mongoose, { Schema, Types} from 'mongoose';
+import mongoose, { Schema, Types, Model} from 'mongoose';
 
 interface MongoResult<T> extends mongoose.Document{
   _doc: T
@@ -10,6 +10,9 @@ export interface VotingGroupInterface extends MongoResult<VotingGroupInterface>{
   adminId: Schema.Types.ObjectId;
   usersId: Array<Schema.Types.ObjectId>;
 }
+interface VotingGroupModelInterface extends Model<VotingGroupInterface> {
+  buildQueryParams(search: string): any;
+}
 
 const VotingGroupSchema = new Schema<VotingGroupInterface>({
   nome: { type: String, required: true, min: 4, },
@@ -18,4 +21,8 @@ const VotingGroupSchema = new Schema<VotingGroupInterface>({
 
 });
 
-export const VotingGroup = mongoose.model<VotingGroupInterface>('VotingGroup', VotingGroupSchema);
+VotingGroupSchema.statics.buildQueryParams = function (search) {
+  return {nome: search}
+}
+
+export const VotingGroup = mongoose.model<VotingGroupInterface, VotingGroupModelInterface >('VotingGroup', VotingGroupSchema);

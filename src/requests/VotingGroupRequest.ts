@@ -26,12 +26,13 @@ export const StoreVotingGroupRequest = [
         .isLength({ min: 5 }).withMessage(ErrorMessages.fieldSizeMessage(4)),
     body('usersId')
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
-        .custom(async (value: Array<string>) => exists(value, User))
+        .custom(async (value: Array<string>, {req}) => exists(value, User, req.user.id))
             .withMessage(ErrorMessages.existsMessage),
 ];
 
 export const RemoveVotingGroupRequest = [
     param('id').notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
+    .isMongoId().bail().withMessage(ErrorMessages.invalidMongoId)
 ];
 
 export const UpdateVotingGroupRequest = [

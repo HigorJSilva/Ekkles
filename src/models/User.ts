@@ -10,6 +10,7 @@ export interface UserInterface extends MongoResult<UserInterface>{
   email: string;
   senha: string;
   role: string;
+  adminId: Types.ObjectId;
   idade: number;
   estado: string;
   genero: string;
@@ -20,6 +21,7 @@ const UserSchema = new Schema<UserInterface>({
   email: { type: String, required: true },
   senha: { type: String, required: true, min: 5, },
   role:  { type: String, required: false },
+  adminId: { type: Schema.Types.ObjectId, ref: 'User', required: false },
   idade: { type: Number, required: true },
   estado: { type: String, required: true },
   genero: { type: String, required: true },

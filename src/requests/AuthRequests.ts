@@ -45,7 +45,9 @@ const RegisterRequest = [
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
         .custom((value) => inArray(value, genero, 'valor')).withMessage(ErrorMessages.invalidMessage),
     body('codigo')
-        .optional({ nullable: true })
+        .optional({ nullable: true }),
+    body('adminId')
+        .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
 ];
 
 export { RegisterRequest, LoginRequest };
