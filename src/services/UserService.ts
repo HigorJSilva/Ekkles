@@ -1,8 +1,7 @@
 import {User, UserInterface} from '../models/User';
 import { UpdateInterface } from '../requests/UserRequests';
+import { Types } from 'mongoose';
 
-//@ts-ignore
-const users: Array<UserInterface>  = User.find();
 
 export async function me(id: string) {
 
@@ -42,16 +41,23 @@ export async function remove(id: string) {
     return true;
 }
 
-async function getAll() {
-    return users.map((user: UserInterface) => {
-        const { senha, role, ...protectedUser } = user;
-        return protectedUser;
-    });
+export async function getAll(adminId: Types.ObjectId) {
+    let result = await User.find({adminId: adminId});
+    let users: Array<any> = [];
+    result.forEach((user: UserInterface) => {
+        const { senha, role, ...protectedUser } = user._doc;
+        users.push(protectedUser);
+    });  
+    
+    return users;
 }
 
-async function getById(id: UserInterface["_id"]) {
-    const user:  any = await User.find((u: UserInterface) => u._id === id);
-    if (!user) return;
-    const { senha, role, ...protectedUser } = user;
+export async function getById(adminId: Types.ObjectId, id: Types.ObjectId) {
+    let user = await User.find({_id:id, adminId: adminId});
+    console.log('TURBO >> file: UserService.ts >> line 57 >> user', user)
+    if (!user){
+        throw new Error("Usuário não encontrado");
+    }
+    const { senha, role, ...protectedUser } = <UserInterface><unknown>user;
     return protectedUser;
 }

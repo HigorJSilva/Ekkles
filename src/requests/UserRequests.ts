@@ -1,4 +1,5 @@
 import { body, param } from 'express-validator';
+import { Types } from 'mongoose';
 import * as ErrorMessages from '../helpers/ErrorsMessages';
 import { estados, genero } from '../helpers/dataHelpers';
 import { inArray } from './customRules/CustomRules';
@@ -9,6 +10,9 @@ export interface UpdateInterface extends Record<string,any> {
     idade: number,
     estado: string,
     genero: string,
+}
+export interface getUserByIdInterface extends Record<string,any> {
+    id: Types.ObjectId
 }
 
 const UpdateRequest = [
@@ -28,4 +32,9 @@ const UpdateRequest = [
     param('user.id').notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
 ];
 
-export { UpdateRequest };
+const getUserByIdRequest = [
+    ...AuthenticatedUserRequest,
+    param('id')
+];
+
+export { UpdateRequest, getUserByIdRequest };
