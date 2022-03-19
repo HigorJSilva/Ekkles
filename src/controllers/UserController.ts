@@ -5,6 +5,7 @@ import { getUserByIdInterface, UpdateInterface } from '../requests/UserRequests'
 import { NextFunction, Request, Response } from 'express';
 import { ApiResponse } from '../helpers/Response';
 import { AuthenticatedUserInterface } from '../requests/AuthenticatedUserRequest';
+import { errorListUsers, errorRemoveUsers, errorUpdateUsers } from '../helpers/ErrorsMessages';
 
 export async function me(req: Request, res:Response, next:NextFunction) {
 
@@ -12,7 +13,7 @@ export async function me(req: Request, res:Response, next:NextFunction) {
     
         .then(user => user 
             ? (res.status(200).json( new ApiResponse(true, null, user, null)))
-            : res.status(422).json( new ApiResponse(false, 'Erro ao cadastrar', null, null))
+            : res.status(422).json( new ApiResponse(false, errorListUsers, null, null))
         )
         .catch((err: Error) => next(res.status(422).json( new ApiResponse(false, err.toString().replace('Error: ',''), null, null))));
 }
@@ -25,7 +26,7 @@ export async function update(req: Request, res:Response, next:NextFunction) {
     
         .then(user => user 
             ? (res.status(200).json( new ApiResponse(true, null, user, null)))
-            : res.status(422).json( new ApiResponse(false, 'Erro ao cadastrar', null, null))
+            : res.status(422).json( new ApiResponse(false, errorUpdateUsers, null, null))
         )
         .catch((err: Error) => next(res.status(422).json( new ApiResponse(false, err.toString().replace('Error: ',''), null, null))));
 }
@@ -38,7 +39,7 @@ export async function remove(req: Request, res:Response, next:NextFunction) {
     
         .then(user => user 
             ? (res.status(200).json( new ApiResponse(true, null, null, null)))
-            : res.status(422).json( new ApiResponse(false, 'Erro ao cadastrar', null, null))
+            : res.status(422).json( new ApiResponse(false, errorRemoveUsers, null, null))
         )
         .catch((err: Error) => next(res.status(422).json( new ApiResponse(false, err.toString().replace('Error: ',''), null, null))));
 }
@@ -50,7 +51,7 @@ export async function getAll(req: Request, res:Response, next:NextFunction) {
     UserService.getAll(filteredRequest.user.id)
         .then(users => users 
             ? (res.status(200).json( new ApiResponse(true, null, users, null)))
-            : res.status(422).json( new ApiResponse(false, 'Erro ao listar usuários', null, null))
+            : res.status(422).json( new ApiResponse(false, errorListUsers, null, null))
         )
         .catch((err: Error) => next(res.status(422).json( new ApiResponse(false, err.toString().replace('Error: ',''), null, null))));
 }
@@ -62,7 +63,7 @@ export async function getById(req: Request, res:Response, next:NextFunction) {
     UserService.getById(filteredRequest.user.id, filteredRequest.id)
         .then(users => users 
             ? (res.status(200).json( new ApiResponse(true, null, users, null)))
-            : res.status(422).json( new ApiResponse(false, 'Erro ao buscar usuário', null, null))
+            : res.status(422).json( new ApiResponse(false, errorListUsers, null, null))
         )
         .catch((err: Error) => next(res.status(422).json( new ApiResponse(false, err.toString().replace('Error: ',''), null, null))));
 }
