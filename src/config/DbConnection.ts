@@ -14,7 +14,7 @@ let url = 'mongodb+srv://'+
  * Classe de conexão do banco de dados mongodb
  * No iniciador da classe é feito a conexão e importada para a API
  */
-module.exports = class MongoDB {
+export = class MongoDB {
     database: any
 
     constructor(){
