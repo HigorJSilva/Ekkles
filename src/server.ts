@@ -1,20 +1,10 @@
-const Mongoose = require ('./config/DbConnection')
-import express from 'express';
+import Mongoose from './config/DbConnection';
 import dotenv from 'dotenv';
-import {routes} from './routes/routes'
-import errorHandler  from './helpers/ErrorHandler';
+import {application} from './config/ExpressApp';
 
 dotenv.config()
 
-const application = express()
 
-application.use(express.json());
-
-application.use(routes);
-
-application.use(errorHandler);
-
-application.set('port', process.env.APP_PORT || 5000)
 
 new Mongoose();
 
