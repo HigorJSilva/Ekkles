@@ -8,8 +8,8 @@ import { GetVoteRequest, StoreVoteRequest } from '../requests/VoteRequest';
 
 const router = express.Router()
 
-router.get('/', authorize(Roles.Admin), AuthenticatedUserRequest, validateRequest, index);
-router.get('/:search', authorize(Roles.Admin), AuthenticatedUserRequest, validateRequest, search);
+router.get('/', authorize(), AuthenticatedUserRequest, validateRequest, index);
+router.get('/:search', authorize(), AuthenticatedUserRequest, validateRequest, search);
 router.post('/', authorize(Roles.Admin), StoreSurveyRequest, validateRequest,  store);
 router.put('/:id', authorize(Roles.Admin), UpdateSurveyRequest, validateRequest,  update);
 router.delete('/:id', authorize(Roles.Admin), RemoveSurveyRequest, validateRequest,  remove);    

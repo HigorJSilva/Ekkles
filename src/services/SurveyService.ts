@@ -4,11 +4,17 @@ import * as _ from 'lodash';
 import { Votes } from '../models/Votes';
 import { StoreSurveyInterface, UpdateSurveyInterface } from '../requests/SurveyRequest';
 import { StoreVotesInterface, GetVoteInterface } from '../requests/VoteRequest';
-import { VotingGroupInterface } from '../models/VotingGroup';
+import { VotingGroup, VotingGroupInterface } from '../models/VotingGroup';
+import { User } from '../models/User';
+import { Roles } from '../helpers/Roles';
 
 export async function index(id: Types.ObjectId) {
 
-    const survey: Array<SurveyInterface> | null = await Survey.find({adminId:id}); 
+    const user = await User.findById(id);
+    let query = user!.role == Roles.Admin ? {adminId:id} : {adminId:user?.adminId}
+
+    let votingGroups  = await VotingGroup.find(query)
+    let survey = Survey.find({'votingGroup': {"$in": _.map(votingGroups, '_id') }});
 
     if (!survey) {
         throw new Error("Não há pesquisas cadastradas");
