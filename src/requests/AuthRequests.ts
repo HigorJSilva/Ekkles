@@ -34,7 +34,7 @@ const RegisterRequest = [
         .custom(async (value: string) => unique(value, 'email', User)).withMessage(ErrorMessages.uniqueMessage),
     body('nome')
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
-        .isLength({ min: 5 }).withMessage(ErrorMessages.fieldSizeMessage(4)),
+        .isLength({ min: 5 }).withMessage(ErrorMessages.fieldSizeMessage(5)),
     body('idade')
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
         .isNumeric().withMessage(ErrorMessages.isNumericMessage),
@@ -47,6 +47,7 @@ const RegisterRequest = [
     body('codigo')
         .optional({ nullable: true }),
     body('adminId')
+        .if(body('codigo').isEmpty())
         .notEmpty().withMessage(ErrorMessages.requiredMessage).bail()
 ];
 
