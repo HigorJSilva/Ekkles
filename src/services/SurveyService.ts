@@ -14,7 +14,7 @@ export async function index(id: Types.ObjectId) {
     let query = user!.role == Roles.Admin ? {adminId:id} : {adminId:user?.adminId}
 
     let votingGroups  = await VotingGroup.find(query)
-    let survey = Survey.find({'votingGroup': {"$in": _.map(votingGroups, '_id') }});
+    let survey = await Survey.find({'votingGroup': {"$in": _.map(votingGroups, '_id') }});
 
     if (!survey) {
         throw new Error("Não há pesquisas cadastradas");
@@ -39,8 +39,14 @@ export async function search(adminId: Types.ObjectId ,search: string) {
 
     const query = Types.ObjectId.isValid(search) ? {_id: search} : Survey.buildQueryParams(search);
 
-    let surveys: Array<SurveyInterface> | null = await Survey.find({adminId:adminId})
-    .or([{$regex: '.*' + query + '.*' }]);
+    const user = await User.findById(adminId);
+    let admin = user!.role == Roles.Admin ? {adminId:adminId} : {adminId:user?.adminId}
+
+    let votingGroups  = await VotingGroup.find(admin)
+
+    let surveys: Array<SurveyInterface> | null = await Survey.find({
+        'votingGroup': {"$in": _.map(votingGroups, '_id') },
+    }).find(query);
 
     if (!surveys) {
         throw new Error("Pesquisa não encontrada");
