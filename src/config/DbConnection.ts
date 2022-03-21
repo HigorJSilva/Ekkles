@@ -5,7 +5,7 @@ dotenv.config()
 
 let url = 'mongodb+srv://'+
 `${process.env.USUARIO}:${process.env.SENHA}`+
-'@cluster0-h5y5e.mongodb.net/'+
+`${process.env.CLUSTER}.mongodb.net/`+
 `${process.env.DATABASE}?retryWrites=true&w=majority`
 
 
