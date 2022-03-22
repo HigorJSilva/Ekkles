@@ -45,7 +45,7 @@ O objetivo principal desse projeto é criar enquetes para serem votadas. O usuá
 participantes, enquetes são atribuidas a um grupo e seus participantes podem votar até a data limite.
 
 
-## Getting TypeScript
+## TypeScript
 Adicione Typescript ao projeto `npm`.
 ```
 npm install -D typescript
