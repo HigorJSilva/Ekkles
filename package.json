@@ -14,7 +14,8 @@
   },
   "type": "commonjs",
   "scripts": {
-    "start": "node build/src/server.js",
+    "start": "node dist/src/server.js",
+    "postinstall": "tsc",
     "dev": "nodemon --watch 'src/' --exec 'ts-node src/server.ts' -e ts"
   },
   "dependencies": {
