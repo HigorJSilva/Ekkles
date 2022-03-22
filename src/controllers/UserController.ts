@@ -9,6 +9,7 @@ import { errorListUsers, errorRemoveUsers, errorUpdateUsers } from '../helpers/E
 
 export async function me(req: Request, res:Response, next:NextFunction) {
 
+    //@ts-ignore
     UserService.me(req.user!.id)
     
         .then(user => user 
