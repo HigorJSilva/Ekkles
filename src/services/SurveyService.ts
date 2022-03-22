@@ -4,11 +4,17 @@ import * as _ from 'lodash';
 import { Votes } from '../models/Votes';
 import { StoreSurveyInterface, UpdateSurveyInterface } from '../requests/SurveyRequest';
 import { StoreVotesInterface, GetVoteInterface } from '../requests/VoteRequest';
-import { VotingGroupInterface } from '../models/VotingGroup';
+import { VotingGroup, VotingGroupInterface } from '../models/VotingGroup';
+import { User } from '../models/User';
+import { Roles } from '../helpers/Roles';
 
 export async function index(id: Types.ObjectId) {
 
-    const survey: Array<SurveyInterface> | null = await Survey.find({adminId:id}); 
+    const user = await User.findById(id);
+    let query = user!.role == Roles.Admin ? {adminId:id} : {adminId:user?.adminId}
+
+    let votingGroups  = await VotingGroup.find(query)
+    let survey = await Survey.find({'votingGroup': {"$in": _.map(votingGroups, '_id') }});
 
     if (!survey) {
         throw new Error("Não há pesquisas cadastradas");
@@ -33,8 +39,14 @@ export async function search(adminId: Types.ObjectId ,search: string) {
 
     const query = Types.ObjectId.isValid(search) ? {_id: search} : Survey.buildQueryParams(search);
 
-    let surveys: Array<SurveyInterface> | null = await Survey.find({adminId:adminId})
-    .or([{$regex: '.*' + query + '.*' }]);
+    const user = await User.findById(adminId);
+    let admin = user!.role == Roles.Admin ? {adminId:adminId} : {adminId:user?.adminId}
+
+    let votingGroups  = await VotingGroup.find(admin)
+
+    let surveys: Array<SurveyInterface> | null = await Survey.find({
+        'votingGroup': {"$in": _.map(votingGroups, '_id') },
+    }).find(query);
 
     if (!surveys) {
         throw new Error("Pesquisa não encontrada");
@@ -43,15 +55,15 @@ export async function search(adminId: Types.ObjectId ,search: string) {
     return surveys;
 }
 
-export async function update(votingGroup: UpdateSurveyInterface) {
+export async function update(survey: UpdateSurveyInterface) {
 
-    let storedSurvey = await Survey.findById(votingGroup.id);
+    let storedSurvey = await Survey.findById(survey.id);
 
     if(!storedSurvey){
-        throw new Error("Não autorizado");
+        throw new Error("Pesquisa não encontrada");
     }
 
-    let updatedSurvey = await storedSurvey.updateOne(votingGroup);
+    let updatedSurvey = await Survey.findByIdAndUpdate(storedSurvey._id, survey, {lean: true});
 
     return updatedSurvey;
 }
@@ -77,8 +89,8 @@ export async function vote(vote: StoreVotesInterface) {
         throw new Error("Pesquisa não encontrada");
     }
 
-    const users = (<VotingGroupInterface> <unknown>survey.votingGroup).usersId;
-    
+    let users = (<VotingGroupInterface> <unknown>survey.votingGroup).usersId;
+    users = _.map(users,'id');
     if(!users.includes(vote.user.id)){
         throw new Error("Usuário não autorizado a responder a pesquisa");
     }
@@ -121,7 +133,7 @@ export async function getVoteResult(vote: GetVoteInterface) {
     let result = await Votes.aggregate([
         {$match:{ "optionId": { "$in": _.map(survey.opcoes, '_id')}}},
         {$unwind: '$optionId'},
-        {$group: {_id: '$optionId', count:{$sum:1}}}
+        {$group: {_id: '$optionId', votos:{$sum:1}}}
     ])
 
     result.forEach(element => {

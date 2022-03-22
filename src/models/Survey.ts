@@ -32,7 +32,7 @@ const SurveySchema =  new Schema<SurveyInterface> ({
 });
 
 SurveySchema.statics.buildQueryParams = function (search) {
-  return {nome: search}
+  return {nome: {$regex: search }}
 }
 
 const populateFields = function(this: Model<SurveyInterface>, next: NextFunction) {

@@ -31,7 +31,7 @@ export async function search(adminId: Types.ObjectId, search: string) {
     
     const query = Types.ObjectId.isValid(search) ? {_id: search} : VotingGroup.buildQueryParams(search)
     let votingGroups: Array<VotingGroupInterface> | null = await VotingGroup.find({adminId:adminId})
-    .or([{$regex: '.*' + query + '.*' }]);
+    .find(query);
 
     if (!votingGroups) {
         throw new Error("Grupo não encontrado");
@@ -42,13 +42,13 @@ export async function search(adminId: Types.ObjectId, search: string) {
 
 export async function update(votingGroup: UpdateVotingGroupInterface) {
 
-    let storedVotingGroup = await VotingGroup.findById(votingGroup.id);
+    let storedVotingGroup = <UpdateVotingGroupInterface> <unknown> await VotingGroup.findById(votingGroup.id);
 
-    if(!storedVotingGroup || storedVotingGroup?.adminId != votingGroup.user.id ){
+    if(!storedVotingGroup || storedVotingGroup?.adminId._id != votingGroup.user.id ){
         throw new Error("Não autorizado");
     }
 
-    let updatedVotingGroup = await storedVotingGroup.updateOne(votingGroup);
+    let updatedVotingGroup = await VotingGroup.findByIdAndUpdate(storedVotingGroup._id, votingGroup, {lean: true});
 
     return updatedVotingGroup;
 }
@@ -61,10 +61,6 @@ export async function remove(id: Types.ObjectId) {
 
     if(surveys.length > 0){
         throw new Error("Exitem pesquisas ligadas a esse grupo");
-    }
-
-    if (!votingGroup) {
-        throw new Error("Grupo não encontrado");
     }
  
     return votingGroup;

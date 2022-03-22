@@ -23,7 +23,7 @@ const VotingGroupSchema = new Schema<VotingGroupInterface>({
 });
 
 VotingGroupSchema.statics.buildQueryParams = function (search) {
-  return {nome: search}
+  return {nome: {$regex: search }}
 }
 
 const populateFields = function(this: Model<VotingGroupModelInterface>, next: NextFunction) {

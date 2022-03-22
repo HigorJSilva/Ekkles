@@ -16,6 +16,7 @@ declare global {
         SECRET: string;
         USUARIO: STRING
         SENHA: string;
+        CLUSTER: string;
         DATABASE: string;
       }
     }
