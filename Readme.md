@@ -35,7 +35,8 @@ npm start
 
 # Endpoints da API 
 
-  Acessa a [documentação do Postamn](https://documenter.getpostman.com/view/15345001/UVsQu5BL) 
+  Acesse a [documentação do Postamn](https://documenter.getpostman.com/view/15345001/UVsQu5BL).
+  A documentação já está configurada requisição a api hospedada no Heroku.
 
 
 
