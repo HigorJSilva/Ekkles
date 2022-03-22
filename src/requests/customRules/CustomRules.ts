@@ -58,11 +58,8 @@ export async function votingAuthRule(userId: Types.ObjectId, surveyId: Types.Obj
         ? user!._id
         : user!.adminId;
 
-    let survey: SurveyPopulatedInterface | null =  await Survey.findById(surveyId).populate({
-       path: 'votingGroup'
-    });
-
-    if(!survey || survey?.votingGroup.adminId.toString() !== adminId.toString()){
+    let survey: SurveyPopulatedInterface | null =  await Survey.findById(surveyId);
+    if(!survey ||  (<SurveyInterface> <unknown> survey?.votingGroup.adminId)._id.toString() !== adminId.toString()){
         return Promise.reject();
     }
 

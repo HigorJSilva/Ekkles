@@ -54,7 +54,6 @@ export async function getAll(adminId: Types.ObjectId) {
 
 export async function getById(adminId: Types.ObjectId, id: Types.ObjectId) {
     let user = await User.find({_id:id, adminId: adminId});
-    console.log('TURBO >> file: UserService.ts >> line 57 >> user', user)
     if (!user){
         throw new Error("Usuário não encontrado");
     }

@@ -55,15 +55,15 @@ export async function search(adminId: Types.ObjectId ,search: string) {
     return surveys;
 }
 
-export async function update(votingGroup: UpdateSurveyInterface) {
+export async function update(survey: UpdateSurveyInterface) {
 
-    let storedSurvey = await Survey.findById(votingGroup.id);
+    let storedSurvey = await Survey.findById(survey.id);
 
     if(!storedSurvey){
-        throw new Error("Não autorizado");
+        throw new Error("Pesquisa não encontrada");
     }
 
-    let updatedSurvey = await storedSurvey.updateOne(votingGroup);
+    let updatedSurvey = await Survey.findByIdAndUpdate(storedSurvey._id, survey, {lean: true});
 
     return updatedSurvey;
 }
@@ -89,8 +89,8 @@ export async function vote(vote: StoreVotesInterface) {
         throw new Error("Pesquisa não encontrada");
     }
 
-    const users = (<VotingGroupInterface> <unknown>survey.votingGroup).usersId;
-    
+    let users = (<VotingGroupInterface> <unknown>survey.votingGroup).usersId;
+    users = _.map(users,'id');
     if(!users.includes(vote.user.id)){
         throw new Error("Usuário não autorizado a responder a pesquisa");
     }
@@ -133,7 +133,7 @@ export async function getVoteResult(vote: GetVoteInterface) {
     let result = await Votes.aggregate([
         {$match:{ "optionId": { "$in": _.map(survey.opcoes, '_id')}}},
         {$unwind: '$optionId'},
-        {$group: {_id: '$optionId', count:{$sum:1}}}
+        {$group: {_id: '$optionId', votos:{$sum:1}}}
     ])
 
     result.forEach(element => {
