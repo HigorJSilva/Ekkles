@@ -12,6 +12,6 @@ application.use(routes);
 
 application.use(errorHandler);
 
-application.set('port', process.env.APP_PORT || 5000)
+application.set('port', process.env.PORT || 5000)
 
 export {application};
