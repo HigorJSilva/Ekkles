@@ -35,7 +35,7 @@ npm start
 
 #Endpoints da API 
 
-  swagger Spec Endpoint : http://localhost:8001/api-docs 
+  Acessa a documentação do Postamn [aqui] :(https://documenter.getpostman.com/view/15345001/UVsQu5BL) 
 
 
 
