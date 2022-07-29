@@ -1,6 +1,16 @@
-# Ekkles
+## Ekkles
 
-# Variáveis de ambiente
+# Objetivo Principal 
+O objetivo principal desse projeto é criar enquetes para serem votadas. O usuário administrador do sistema cadastra grupos e adiciona os
+participantes, enquetes são atribuidas a um grupo e seus participantes podem votar até a data limite.
+
+
+### Endpoints da API 
+
+  Acesse a [documentação do Postamn](https://documenter.getpostman.com/view/15345001/UVsQu5BL).
+  A documentação já está configurada requisição a api hospedada no Heroku.
+
+### Variáveis de ambiente
 Esse projeto usa as seguintes varáveis de ambiente:
 
 | Nome                          | Descrição                           |
@@ -14,11 +24,11 @@ Esse projeto usa as seguintes varáveis de ambiente:
 
 
 
-# Pré-requisitos
+### Pré-requisitos
 - Instale [Node.js](https://nodejs.org/en/) versão 8.0.0
 
 
-# Instalação
+### Instalação
 - Clone o repositório
 ```
 git clone https://github.com/HigorJSilva/Ekkles.git
@@ -33,25 +43,7 @@ npm install
 npm start
 ```
 
-# Endpoints da API 
-
-  Acesse a [documentação do Postamn](https://documenter.getpostman.com/view/15345001/UVsQu5BL).
-  A documentação já está configurada requisição a api hospedada no Heroku.
-
-
-
-# Objetivo Principal 
-O objetivo principal desse projeto é criar enquetes para serem votadas. O usuário administrador do sistema cadastra grupos e adiciona os
-participantes, enquetes são atribuidas a um grupo e seus participantes podem votar até a data limite.
-
-
-## TypeScript
-Adicione Typescript ao projeto `npm`.
-```
-npm install -D typescript
-```
-
-## Estrutura do projeto
+### Estrutura do projeto
 A extrutura da aplicação é explicada a seguir:
 
 | Nome                     | Descrição |
@@ -68,3 +60,8 @@ A extrutura da aplicação é explicada a seguir:
 | package.json             | Dependências npm.                                                                                   | 
 | tsconfig.json            | Configurações para compilar código-fonte escritos em TypeScript    
 
+### Dependencias
+    * mongoose: ORM para MongoDB
+    * MondoDV: Banco de dados não relacional
+    * Express: Framework web service 
+    * Express validator: Validação das requisições
